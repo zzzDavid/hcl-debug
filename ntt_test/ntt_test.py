@@ -91,7 +91,7 @@ def cooley_tukey(S, N, M, ω):
             for b in range(i, i + half):  # Butterfly
                 e = b + half
                 l = P[b]
-                print(f"e: {e}, k: {k}, b: {b}, half: {half}, i: {i}, size: {size}")
+                # print(f"e: {e}, k: {k}, b: {b}, half: {half}, i: {i}, size: {size}")
                 r = P[e] * ω[k]
                 P[b] = (l + r) % M
                 P[e] = (l - r) % M
@@ -124,10 +124,10 @@ def test_fwd_cooley_tukey():
     res_ref = cooley_tukey(a, N, M, fomega)
     res_hcl = hcl.asarray(np.zeros((N,)), dtype=dtype)
 
-    print("A:", a)
-    print("ω:", fomega)
-    print("M:", M)
-    print("ref:", res_ref)
+    # print("A:", a)
+    # print("ω:", fomega)
+    # print("M:", M)
+    # print("ref:", res_ref)
     # break
 
     f_hcl(hcl.asarray(a, dtype=dtype),
@@ -136,6 +136,7 @@ def test_fwd_cooley_tukey():
           res_hcl)
 
     np.testing.assert_equal(res_ref, res_hcl.asnumpy())
+    print("test passed")
 
 if __name__ == '__main__':
   test_fwd_cooley_tukey()

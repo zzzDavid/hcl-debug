@@ -2,8 +2,8 @@
 #map1 = affine_map<(d0, d1) -> (d1 + d0)>
 #set = affine_set<(d0) : (d0 - 2 >= 0)>
 module {
-  func.func @top(%arg0: memref<10x10xi32>) -> memref<8x8xi32> attributes {itypes = "s", otypes = "s"} {
-    %0 = memref.alloc() {name = "compute_1"} : memref<8x8xi32>
+  func.func @top(%arg0: memref<10x10xi32>, %0 : memref<8x8xi32>) -> () attributes {itypes = "s", otypes = "s", llvm.emit_c_interface} {
+    // %0 = memref.alloc() {name = "compute_1"} : memref<8x8xi32>
     %1 = memref.alloc() {name = "compute_1_reuse_1"} : memref<3x10xi32>
     %2 = memref.alloc() {name = "compute_1_reuse_2"} : memref<3x3xi32>
     affine.for %arg1 = 0 to 2 {
@@ -45,13 +45,14 @@ module {
               } {loop_name = "rx_0", reduction}
               %c0_0 = arith.constant 0 : index
               %9 = affine.load %8[%c0_0] {from = "sum_rv"} : memref<1xi32>
-              affine.store %9, %0[%arg2, %7 - 2] : memref<8x8xi32>
+              affine.store %9, %0[%arg2 - 2, %7 - 2] : memref<8x8xi32>
             }
           } {loop_name = "x.inner"}
         }
       } {loop_name = "y"}
     } {loop_name = "x.outer", op_name = "compute_1"}
-    return %0 : memref<8x8xi32>
+    // return %0 : memref<8x8xi32>
+    return
   }
 }
 

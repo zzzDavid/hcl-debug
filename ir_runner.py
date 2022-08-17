@@ -22,10 +22,15 @@ def get_assembly(filename):
         code = f.read()
     return code
 
-
-def test_execution_engine(P=16, Q=22, R=18, S=24):
+"""
+Assumptions:
+1. returned values are moved to input arg list
+2. invoke entry point function is named "top"
+3. llvm.emit_c_interface is attached to the top function
+"""
+def run_ir(ir_filename, input_args):
     code = get_assembly(os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "gt.mlir"))
+        os.path.abspath(__file__)), ir_filename))
 
     # Add shared library
     if os.getenv("LLVM_BUILD_DIR") is not None:
@@ -35,45 +40,40 @@ def test_execution_engine(P=16, Q=22, R=18, S=24):
             os.path.join(os.getenv("LLVM_BUILD_DIR"),
                          'lib', 'libmlir_c_runner_utils.so')
         ]
+        print("Got shared libs: {}".format(shared_libs))
     else:
+        print("LLVM_BUILD_DIR not set")
         shared_libs = None
 
-    A = np.random.randint(10, size=(P, Q)).astype(np.float32)
-    B = np.random.randint(10, size=(Q, R)).astype(np.float32)
-    C = np.random.randint(10, size=(R, S)).astype(np.float32)
-    D = np.random.randint(10, size=(P, S)).astype(np.float32)
-    # res1 = np.zeros((P, S), dtype=np.float32)
-
-    A_memref = ctypes.pointer(
-        ctypes.pointer(get_ranked_memref_descriptor(A)))
-    B_memref = ctypes.pointer(
-        ctypes.pointer(get_ranked_memref_descriptor(B)))
-    C_memref = ctypes.pointer(
-        ctypes.pointer(get_ranked_memref_descriptor(C)))
-    D_memref = ctypes.pointer(
-        ctypes.pointer(get_ranked_memref_descriptor(D)))
-    # res1_memref = ctypes.pointer(
-    # ctypes.pointer(get_ranked_memref_descriptor(res1))
-    # )
-    res1 = make_nd_memref_descriptor(2, ctypes.c_float)()
-    res1_memref = ctypes.pointer(ctypes.pointer(res1))
+    input_memrefs = [ctypes.pointer(ctypes.pointer(get_ranked_memref_descriptor(arg))) for arg in input_args]
 
     with Context():
         module = Module.parse(code)
         lowered = lowerToLLVM(module)
-        print(lowered)
-        # if shared_libs is not None:
-        #     execution_engine = ExecutionEngine(
-        #         lowered, opt_level=3, shared_libs=shared_libs)
-        # else:
-        #     execution_engine = ExecutionEngine(lowered)
-        # execution_engine.invoke(
-        #     "top", res1_memref, A_memref, B_memref, C_memref, D_memref)
-
-    # ret = ranked_memref_to_numpy(res1_memref[0])
-    # golden = 0.1 * np.matmul(np.matmul(A, B), C) + 0.1 * D
-    # assert np.allclose(ret, golden)
+        if shared_libs is not None:
+            execution_engine = ExecutionEngine(
+                lowered, opt_level=0, shared_libs=shared_libs)
+        else:
+            execution_engine = ExecutionEngine(lowered)
+        execution_engine.invoke(
+            "top", *input_memrefs)
 
 
 if __name__ == "__main__":
-    test_execution_engine()
+    filename = "gt.mlir"
+    np_A = np.random.randint(0, 10, size=(10, 10)).astype(np.int32)
+    np_B = np.zeros((8, 8)).astype(np.int32)
+    run_ir(filename, [np_A, np_B])
+
+    print("np_B: {}".format(np_B))
+
+    np_C = np.zeros((8, 2, 4)).astype(np.int32)
+    for y in range(0, 8):
+        for xo in range(0, 2):
+            for xi in range(0, 4):
+                for r in range(0, 3):
+                    for c in range(0, 3):
+                        np_C[y][xo][xi] += np_A[y+r][xi+xo*4+c]
+    np_C = np_C.reshape((8, 8))
+    assert np.array_equal(np_B, np_C)
+    print("np_C: {}".format(np_C))

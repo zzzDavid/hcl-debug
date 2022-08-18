@@ -59,7 +59,7 @@ def run_ir(ir_filename, input_args):
             "top", *input_memrefs)
 
 
-if __name__ == "__main__":
+def test_gt():
     filename = "gt.mlir"
     np_A = np.random.randint(0, 10, size=(10, 10)).astype(np.int32)
     np_B = np.zeros((8, 8)).astype(np.int32)
@@ -77,3 +77,19 @@ if __name__ == "__main__":
     np_C = np_C.reshape((8, 8))
     assert np.array_equal(np_B, np_C)
     print("np_C: {}".format(np_C))
+
+
+def test_mlir_memref_print():
+    filename = "print/test_mlir_printer.mlir"
+    np_A = np.random.randint(0, 10, size=(3, 3, 3)).astype(np.int32)
+    np_B = np.random.randint(0, 10, size=(3, 3, 3)).astype(np.int64)
+    np_C = np.random.rand(3, 3, 3).astype(np.float32)
+    np_D = np.random.rand(3, 3, 3).astype(np.float64)
+    run_ir(filename, [np_A, np_B, np_C, np_D])
+    print("np_A: {}".format(np_A))
+    print("np_B: {}".format(np_B))
+    print("np_C: {}".format(np_C))
+    print("np_D: {}".format(np_D))
+
+if __name__ == "__main__":
+    test_mlir_memref_print()

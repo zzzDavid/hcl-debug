@@ -26,10 +26,13 @@
             "affine.store"(%6, %2, %arg4) {map = affine_map<(d0) -> (d0, 0)>} : (i32, memref<3x3xi32>, index) -> ()
             %7 = "affine.load"(%2, %arg4) {map = affine_map<(d0) -> (d0, 2)>} : (memref<3x3xi32>, index) -> i32
             "affine.store"(%7, %2, %arg4) {map = affine_map<(d0) -> (d0, 1)>} : (i32, memref<3x3xi32>, index) -> ()
-            %9 = "affine.apply"(%arg1) {map = affine_map<(d0) -> (d0 * 4)>} : (index) -> index
-            %10 = "affine.apply"(%9, %arg3) {map = affine_map<(d0, d1) -> (d1 + d0)>} : (index, index) -> index
-            %8 = "affine.load"(%1, %arg4, %10) {map = affine_map<(d0, d1) -> (d0, d1)>} : (memref<3x10xi32>, index, index) -> i32
-            "affine.store"(%8, %2, %arg4) {map = affine_map<(d0) -> (d0, 2)>} : (i32, memref<3x3xi32>, index) -> ()
+            %8 = "affine.apply"(%arg1) {map = affine_map<(d0) -> (d0 * 4)>} : (index) -> index
+            // issue: the first operand is wrong, should be %8
+            %9 = "affine.apply"(%6, %arg3) {map = affine_map<(d0, d1) -> (d1 + d0)>} : (index, index) -> index
+            // issue: the second operand is wrong, should be %9
+            // fix this by updating memAffineIndices after creating the affine.apply
+            %10 = "affine.load"(%1, %arg4, %7) {map = affine_map<(d0, d1) -> (d0, d1)>} : (memref<3x10xi32>, index, index) -> i32
+            "affine.store"(%10, %2, %arg4) {map = affine_map<(d0) -> (d0, 2)>} : (i32, memref<3x3xi32>, index) -> ()
             "affine.yield"() : () -> ()
           }) {lower_bound = affine_map<() -> (0)>, spatial, step = 1 : index, upper_bound = affine_map<() -> (3)>} : () -> ()
           "affine.if"(%arg3) ({
@@ -44,15 +47,17 @@
               "affine.for"() ({
               ^bb0(%arg5: index):
                 %13 = "affine.load"(%2, %arg4, %arg5) {map = affine_map<(d0, d1) -> (d0, d1)>} : (memref<3x3xi32>, index, index) -> i32
-                %14 = "affine.load"(%8, %9) {from = "sum_rv", map = affine_map<(d0) -> (d0)>} : (memref<1xi32>, index) -> i32
-                %15 = "arith.addi"(%13, %14) : (i32, i32) -> i32
-                "affine.store"(%15, %8, %9) {map = affine_map<(d0) -> (d0)>, to = "sum_rv"} : (i32, memref<1xi32>, index) -> ()
+                %14 = "affine.load"(%1, %arg4, %7, %arg5) {map = affine_map<(d0, d1, d2) -> (d0, d1 + d2)>} : (memref<3x10xi32>, index, index, index) -> i32
+                %15 = "affine.load"(%8, %9) {from = "sum_rv", map = affine_map<(d0) -> (d0)>} : (memref<1xi32>, index) -> i32
+                %16 = "arith.addi"(%13, %15) : (i32, i32) -> i32
+                "affine.store"(%16, %8, %9) {map = affine_map<(d0) -> (d0)>, to = "sum_rv"} : (i32, memref<1xi32>, index) -> ()
                 "affine.yield"() : () -> ()
               }) {loop_name = "rx_1", lower_bound = affine_map<() -> (0)>, reduction, step = 1 : index, upper_bound = affine_map<() -> (3)>} : () -> ()
               "affine.yield"() : () -> ()
             }) {loop_name = "rx_0", lower_bound = affine_map<() -> (0)>, reduction, step = 1 : index, upper_bound = affine_map<() -> (3)>} : () -> ()
             %11 = "arith.constant"() {value = 0 : index} : () -> index
             %12 = "affine.load"(%8, %11) {from = "sum_rv", map = affine_map<(d0) -> (d0)>} : (memref<1xi32>, index) -> i32
+            "affine.store"(%12, %0, %arg2, %7) {map = affine_map<(d0, d1) -> (d0, d1 - 2)>} : (i32, memref<8x8xi32>, index, index) -> ()
             "affine.store"(%12, %0, %arg2, %7) {map = affine_map<(d0, d1) -> (d0, d1 - 2)>} : (i32, memref<8x8xi32>, index, index) -> ()
             "affine.yield"() : () -> ()
           }, {

@@ -1,11 +1,26 @@
 import heterocl as hcl
 
+# def hclctxt():
+#     from heterocl.schedule import Schedule
+#     if Schedule._TopFunction is not None:
+#         return True
+#     else:
+#         return False
+
 def hclctxt():
-    from heterocl.schedule import Schedule
-    if Schedule._TopFunction is not None:
-        return True
-    else:
+    from hcl_mlir import GlobalInsertionPoint
+    if len(GlobalInsertionPoint.ip_stack) == 0:
         return False
+    else:
+        return True
+
+# def hclctxt():
+#     from heterocl.schedule import Schedule
+#     import ipdb; ipdb.set_trace()
+#     if len(Schedule._CurrentStage) > 0:
+#         return True
+#     else:
+#         return False
  
 def add(a, b):
     if hclctxt():
@@ -28,8 +43,8 @@ def regular():
     return c
 
 if __name__ == "__main__":
-    print("using `add` as regular Python function, the result is: ")
-    print(regular())
     s = hcl.create_schedule([], kernel)
     print("using `add` in HeteroCL context, the IR is: ")
     print(hcl.lower(s))
+    print("using `add` as regular Python function, the result is: ")
+    print(regular())

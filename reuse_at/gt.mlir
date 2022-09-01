@@ -7,8 +7,8 @@ module {
     %1 = memref.alloc() {name = "compute_1_reuse_1"} : memref<3x10xi32>
     %2 = memref.alloc() {name = "compute_1_reuse_2"} : memref<3x3xi32>
     affine.for %arg1 = 0 to 2 {
-      affine.for %arg2 = 0 to 10 {
-        affine.for %arg3 = 0 to 10 {
+      affine.for %arg2 = 0 to 10 { // 8 + 2
+        affine.for %arg3 = 0 to 10 { // because of line buffer's shape
           %6 = affine.load %1[1, %arg3] : memref<3x10xi32>
           affine.store %6, %1[0, %arg3] : memref<3x10xi32>
           %7 = affine.load %1[2, %arg3] : memref<3x10xi32>

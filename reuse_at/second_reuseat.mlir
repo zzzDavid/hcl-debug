@@ -33,7 +33,7 @@ module {
             } {loop_name = "rx_0", reduction}
             %c0_0 = arith.constant 0 : index
             %5 = affine.load %4[%c0_0] {from = "sum_rv"} : memref<1xi32>
-            affine.store %5, %0[%arg2, %3 - 2] : memref<8x8xi32>
+            affine.store %5, %0[%arg2 - 2, %3] : memref<8x8xi32>
           } {loop_name = "x.inner"}
         }
       } {loop_name = "y"}

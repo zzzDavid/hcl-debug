@@ -1,26 +1,8 @@
 import heterocl as hcl
 
-# def hclctxt():
-#     from heterocl.schedule import Schedule
-#     if Schedule._TopFunction is not None:
-#         return True
-#     else:
-#         return False
-
 def hclctxt():
-    from hcl_mlir import GlobalInsertionPoint
-    if len(GlobalInsertionPoint.ip_stack) == 0:
-        return False
-    else:
-        return True
-
-# def hclctxt():
-#     from heterocl.schedule import Schedule
-#     import ipdb; ipdb.set_trace()
-#     if len(Schedule._CurrentStage) > 0:
-#         return True
-#     else:
-#         return False
+    from heterocl.context import GlobalContext
+    return GlobalContext.in_context
  
 def add(a, b):
     if hclctxt():

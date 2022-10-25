@@ -89,7 +89,7 @@ def top(target=None):
     return f, total_time
 
 
-offload, build_time = top("vhls")
+offload, build_time = top()
 
 def knn_vote(knn_mat):
     knn_mat.sort(axis = 1)
@@ -113,11 +113,11 @@ if __name__ == "__main__":
         hcl_train_images = hcl.asarray(train_images, dtype_image)
         hcl_train_images_list.append(hcl_train_images)
 
-    hcl_knn_mat = hcl.asarray(np.zeros((10, 3)), dtype_knnmat)
-    # start = time.time()
-    # offload(test_images[0], *hcl_train_images_list, hcl_knn_mat)
-    # total_time = total_time + (time.time() - start)
-    total_time = 0.
+    hcl_knn_mat = hcl.asarray(np.zeros((10, 3)), dtype_image)
+    test_images = hcl.asarray(np.array(test_images[0]).reshape((1,)), dtype_image)
+    start = time.time()
+    offload(test_images, *hcl_train_images_list, hcl_knn_mat)
+    total_time = total_time + (time.time() - start)
 
     # Convert back to a numpy array
     knn_mat = hcl_knn_mat.asnumpy()

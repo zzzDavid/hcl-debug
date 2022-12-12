@@ -21,7 +21,7 @@ def test_multi_level_stage_acess():
     A = hcl.placeholder((10, 10))
     B = hcl.placeholder((10, 10))
     s = hcl.customize([A, B], kernel)
-    print(hcl.lower(s))
+    # print(hcl.lower(s))
 
     # Access top-level stages
     print(kernel.C)
@@ -29,6 +29,7 @@ def test_multi_level_stage_acess():
 
     # Access substages
     # kernel.Super.update_C
+    print(kernel.Super.update_C)
 
     # Access stages in subfunctions
     # kernel.subfunc.update_D

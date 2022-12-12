@@ -91,5 +91,19 @@ def test_mlir_memref_print():
     print("np_C: {}".format(np_C))
     print("np_D: {}".format(np_D))
 
+def test_stride_2_conv():
+    filename = "reuse_at/stride_2_conv.mlir"
+    np_A = np.random.randint(0, 10, size=(10, 10)).astype(np.int32)
+    np_B = np.zeros((4,4)).astype(np.int32)
+    np_C = np.zeros((4, 4), dtype="int")
+    for y in range(0, 4):
+        for x in range(0, 4):
+            for r in range(0, 3):
+                for c in range(0, 3):
+                    np_C[y][x] += np_A[y*2+r][x*2+c]
+    run_ir(filename, [np_A, np_B])
+    print("np_B: {}".format(np_B))
+    assert np.array_equal(np_B, np_C)
+
 if __name__ == "__main__":
-    test_mlir_memref_print()
+    test_stride_2_conv()

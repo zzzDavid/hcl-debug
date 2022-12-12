@@ -1,0 +1,116 @@
+## HeteroCL Main Branch Typing Rules
+### Add Sub
+To lay down the typing rules systematically, we consider the product of five types:
+(Int, UInt, Fixed, UFixed, Float) x (Int, UInt, Fixed, UFixed, Float).
+So there should be in total 25 rules. Some operations are commutative, so some rules can be combined.
+import heterocl as hcl
+
+def add(A, B, C, D, E):
+    hcl.compute((1,), lambda x : B[x] + E[x], name="uint_ufixed")
+
+A = hcl.placeholder((1,), "A", dtype=hcl.Int(32))
+B = hcl.placeholder((1,), "B", dtype=hcl.UInt(31))
+C = hcl.placeholder((1,), "C", dtype=hcl.Float(32))
+D = hcl.placeholder((1,), "D", dtype=hcl.Fixed(31, 4))
+E = hcl.placeholder((1,), "E", dtype=hcl.UFixed(31, 2))
+s = hcl.create_schedule([A, B, C, D, E], add)
+print(hcl.lower(s))
+Add Sub rules are commutative.
+
+#### Int x (Int, UInt, Fixed, UFixed, Float)
+```
+int(b1) + int(b2) -> int(max(b1, b2) + 1)
+int(b1) + uint(b2) -> int(max(b1, b2 + 1) + 1)
+int(b1) + fixed(b2, f2) -> fixed(max(b1, b2-f2) + 1 + f2, f2)
+int(b1) + ufixed(b2, f2) -> fixed(max(b1, b2+1-f2) + 1 + f2, f2)
+int(b1) + float -> float
+```
+#### UInt x (Int, UInt, Fixed, UFixed, Float)
+```
+uint(b1) + int(b2) covered
+uint(b1) + uint(b2) -> uint(max(b1, b2) + 1)
+uint(b1) + fixed(b2, f2) -> fixed(max(b1+1, b2-f2) + 1 + f2, f2)
+uint(b1) + ufixed(b2, f2) -> ufixed(max(b1, b2-f2) + 1 + f2, f2) (to be verified)
+uint(b1) + float -> float
+```
+#### Fixed x (Int, UInt, Fixed, UFixed, Float)
+```
+fixed(b1, f1) + Int covered
+fixed(b1, f1) + UInt covered
+fixed(b1, f1) + fixed(b2, f2) -> fixed(max(b1-f1, b2-f2) + 1 + max(f1, f2), max(f1, f2))
+fixed(b1, f1) + ufixed(b2, f2) -> fixed(max(b1-f1, b2+1-f2) + 1 + max(f1, f2), max(f1, f2))
+fixed(b1, f1) + float -> float
+````
+#### UFixed x (Int, UInt, Fixed, UFixed, Float)
+```
+ufixed + int covered
+ufixed + uint covered
+ufixed + fixed covered
+ufixed(b1, f1) + ufixed(b2, f2) -> ufixed(max(b1-f1, b2-f2) + 1 + max(f1, f2), max(f1, f2)) (to be verified)
+ufixed + float -> float
+```
+#### Float x (Int, UInt, Fixed, UFixed, Float)
+```
+all covered
+```
+### Mul
+import heterocl as hcl
+
+def mul(A, B, C, D, E):
+    # hcl.compute((1,), lambda x : A[x] * A[x], name="int_int")
+    # hcl.compute((1,), lambda x : A[x] * B[x], name="int_uint")
+    # hcl.compute((1,), lambda x : B[x] * B[x], name="uint_uint")
+    # hcl.compute((1,), lambda x : A[x] * D[x], name="int_fixed")
+    # hcl.compute((1,), lambda x : A[x] * E[x], name="int_ufixed")
+    # hcl.compute((1,), lambda x : B[x] * D[x], name="uint_fixed")
+    # hcl.compute((1,), lambda x : B[x] * E[x], name="uint_ufixed")
+    hcl.compute((1,), lambda x : D[x] * D[x], name="fixed_ufixed")
+
+A = hcl.placeholder((1,), "A", dtype=hcl.Int(32))
+B = hcl.placeholder((1,), "B", dtype=hcl.UInt(31))
+C = hcl.placeholder((1,), "C", dtype=hcl.Float(32))
+D = hcl.placeholder((1,), "D", dtype=hcl.Fixed(31, 4))
+E = hcl.placeholder((1,), "E", dtype=hcl.UFixed(31, 2))
+s = hcl.create_schedule([A, B, C, D, E], mul)
+print(hcl.lower(s))
+int(b1) * int(b2) -> int(b1 + b2)
+int(b1) * uint(b2) -> int(b1 + b2)
+uint(b1) * uint(b2) -> uint(b1 + b2)
+int(b1) * fixed(b2, f2) -> fixed(b1 + b2, f2)
+int(b1) * ufixed(b2, f2) -> fixed(b1 + b2, f2)
+uint(b1) * fixed(b2, f2) -> fixed(b1 + b2, f2)
+uint(b1) * ufixed(b2, f2) -> ufixed(b1 + b2, f2)
+fixed(b1, f1) * fixed(b2, f2) -> fixed(b1 + b2, f1 + f2)
+fixed(b1, f1) * ufixed(b2, f2) -> fixed(b1 + b2, f1 + f2)
+ufixed(b1, f1) * ufixed(b2, f2) -> ufixed(b1 + b2, f1 + f2)
+any * float -> float
+### Div
+import heterocl as hcl
+
+def div(A, B, C, D, E):
+    hcl.compute((1,), lambda x : A[x] / hcl.cast(hcl.Int(36), B[x]), name="int_int")
+    # hcl.compute((1,), lambda x : A[x] / B[x], name="int_uint")
+    # hcl.compute((1,), lambda x : B[x] / A[x], name="uint_int")
+    # hcl.compute((1,), lambda x : B[x] / hcl.cast(hcl.UInt(36), A[x]), name="uint_uint")
+    # hcl.compute((1,), lambda x : A[x] * D[x], name="int_fixed")
+    # hcl.compute((1,), lambda x : A[x] * E[x], name="int_ufixed")
+    # hcl.compute((1,), lambda x : B[x] * D[x], name="uint_fixed")
+    # hcl.compute((1,), lambda x : B[x] * E[x], name="uint_ufixed")
+    # hcl.compute((1,), lambda x : D[x] * D[x], name="fixed_ufixed")
+
+A = hcl.placeholder((1,), "A", dtype=hcl.Int(35))
+B = hcl.placeholder((1,), "B", dtype=hcl.UInt(31))
+C = hcl.placeholder((1,), "C", dtype=hcl.Float(32))
+D = hcl.placeholder((1,), "D", dtype=hcl.Fixed(31, 4))
+E = hcl.placeholder((1,), "E", dtype=hcl.UFixed(31, 2))
+s = hcl.create_schedule([A, B, C, D, E], div)
+print(hcl.lower(s))
+int(b1) / int(b2) -> int(b1)
+int(b1) / uint(b2) -> int(b1)
+uint(b1) / int(b2) -> int(b1)
+uint(b1) / uint(b2) -> uint(b1)
+### Mod
+### Shift
+
+### Reduce
+

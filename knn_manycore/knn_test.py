@@ -101,9 +101,11 @@ def knn_vote(knn_mat):
 
     return np.argmax(knn_score)
 
-
+@profile
+def run_offload(test_images, hcl_train_images_list, hcl_knn_mat):
+    offload(test_images, *hcl_train_images_list, hcl_knn_mat)
+    
 if __name__ == "__main__":
-
     train_images, _, test_images, test_labels = read_digitrec_data()
     correct = 0.0
 
@@ -116,7 +118,7 @@ if __name__ == "__main__":
     hcl_knn_mat = hcl.asarray(np.zeros((10, 3)), dtype_image)
     test_images = hcl.asarray(np.array(test_images[0]).reshape((1,)), dtype_image)
     start = time.time()
-    offload(test_images, *hcl_train_images_list, hcl_knn_mat)
+    run_offload(test_images, hcl_train_images_list, hcl_knn_mat)
     total_time = total_time + (time.time() - start)
 
     # Convert back to a numpy array
@@ -126,3 +128,4 @@ if __name__ == "__main__":
 
     with open("time.txt", "a+") as fp:
         fp.write(f"{num},{build_time},{total_time}\n")
+

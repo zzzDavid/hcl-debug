@@ -4,6 +4,7 @@ import sys
  
 def fileline(frame=0):
     fr = sys._getframe(frame+1) # +1 to ignore this function call ...
+    import ipdb; ipdb.set_trace()
     return (os.path.basename(fr.f_code.co_filename), fr.f_lineno)
  
 class foo:

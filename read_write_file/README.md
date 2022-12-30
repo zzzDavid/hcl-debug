@@ -46,7 +46,22 @@ Check the `demo.mlir` for a working example.
 To compile it, first replace the absolute path strings, and update the string sizes.
 Then, run `run.sh`, which should output a binary `demo`. 
 
+Note that you may need to update the library paths in `run.sh`.
+
 Executing `./demo` has the expected output:
+```
+LoadMemref: array loaded from file (4 elements):
+21 256 817 3863 
+Unranked Memref base@ = 0x675010 rank = 2 offset = 0 sizes = [2, 2] strides = [2, 1] data = 
+[[21,   256], 
+ [817,   3863]]
+Writing memref to file: /home/nz264/shared/mlir/debug/read_write_file/output.txt
+LoadMemref: array loaded from file (4 elements):
+134.1 204.197 231.292 1.01934 
+Unranked Memref base@ = 0x6750a0 rank = 2 offset = 0 sizes = [2, 2] strides = [2, 1] data = 
+[[134.1,   204.197], 
+ [231.292,   1.01934]]
+```
 
 ## Lesson learned
 

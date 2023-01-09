@@ -1,7 +1,7 @@
-INFO-FLOW: Workspace /work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing/kernel.prj/solution1 opened at Mon Jan 09 17:29:58 EST 2023
+INFO-FLOW: Workspace /work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing/kernel.prj/solution1 opened at Mon Jan 09 18:08:59 EST 2023
 Execute     set_part xc7z020clg484-1 
 Execute       ap_part_info -name xc7z020clg484-1 -data single -quiet 
-Command       ap_part_info done; 4.45 sec.
+Command       ap_part_info done; 4.06 sec.
 Execute       ap_part_info -name xc7z020clg484-1 -data info 
 Execute       add_library xilinx/zynq/zynq:xc7z020:-clg484:-1 
 Execute         get_default_platform 
@@ -44,11 +44,10 @@ Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/
 Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/ip/dds_compiler.gen 
 Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/ip/util.gen 
 Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/ip/xfft.gen 
-Command             ap_source done; 0.13 sec.
 Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/ip/xfir.gen 
 Execute             source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/common/dsp48.gen 
-Command           ap_source done; 0.2 sec.
-Command         ap_source done; 0.2 sec.
+Command           ap_source done; 0.18 sec.
+Command         ap_source done; 0.18 sec.
 Execute         ap_part_info -data single -name xc7z020-clg484-1 
 Execute         ap_part_info -name xc7z020-clg484-1 -data resources 
 Execute         ap_part_info -name xc7z020-clg484-1 -data info 
@@ -56,7 +55,7 @@ Execute         ap_part_info -name xc7z020-clg484-1 -data info
 Execute         config_chip_info -quiet -resource {SLICE 13300} {LUT 53200} {FF 106400} {DSP48E 220} {BRAM 280} {URAM 0} 
 Execute         ap_part_info -name xc7z020-clg484-1 -data info 
 Execute         config_chip_info -quiet -speed slow 
-Command       add_library done; 0.41 sec.
+Command       add_library done; 0.32 sec.
 Execute       add_library xilinx/zynq/zynq_fpv6 
 Execute         get_default_platform 
 Execute         open_platform DefaultPlatform 
@@ -71,11 +70,10 @@ Execute                 source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/201
 Execute               source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
 Execute         source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/zynq/zynq_fpv6.gen 
 Execute           source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.gen 
-Command       add_library done; 0.14 sec.
 INFO: [HLS 200-10] Setting target device to 'xc7z020-clg484-1'
 Execute       ap_part_info -name xc7z020-clg484-1 -data info 
 Execute       get_default_platform 
-Command     set_part done; 5.17 sec.
+Command     set_part done; 4.56 sec.
 Execute     create_clock -period 10 -name default 
 Execute       config_clock -quiet -name default -period 10 -default=false 
 INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
@@ -87,8 +85,8 @@ Execute       is_xip /work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_p
 Execute       is_encrypted /work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing/kernel.cpp 
 Execute       is_xip /work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing/kernel.cpp 
 Execute       ap_part_info -name xc7z020-clg484-1 -data info 
-Execute       source run_sim.tcl 
-INFO: [SIM 211-1] CSim done with 0 errors.
+ERROR: [SIM 211-100] 'csim_design' failed: compilation error(s).
 INFO: [SIM 211-3] *************** CSIM finish ***************
-Command     csim_design done; 4.67 sec.
-Execute     cleanup_all 
+Command     csim_design done; error code: 2; 4.27 sec.
+Command   ap_source done; error code: 1; 9.11 sec.
+Execute   cleanup_all 

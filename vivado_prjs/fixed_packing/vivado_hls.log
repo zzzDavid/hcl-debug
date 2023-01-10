@@ -7,7 +7,7 @@
 source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/scripts/vivado_hls/hls.tcl -notrace
 INFO: Applying HLS Y2K22 patch v1.2 for IP revision
 INFO: [HLS 200-10] Running '/opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'nz264' on host 'en-ec-brg-zhang-xcel.coecis.cornell.edu' (Linux_x86_64 version 3.10.0-1160.76.1.el7.x86_64) on Mon Jan 09 18:08:59 EST 2023
+INFO: [HLS 200-10] For user 'nz264' on host 'en-ec-brg-zhang-xcel.coecis.cornell.edu' (Linux_x86_64 version 3.10.0-1160.76.1.el7.x86_64) on Tue Jan 10 01:56:29 EST 2023
 INFO: [HLS 200-10] On os "CentOS Linux release 7.9.2009 (Core)"
 INFO: [HLS 200-10] In directory '/work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing'
 Sourcing Tcl script 'run.tcl'
@@ -22,39 +22,11 @@ INFO: [SIM 211-2] *************** CSIM start ***************
 INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
    Compiling ../../../../host.cpp in debug mode
    Compiling ../../../../kernel.cpp in debug mode
-../../../../kernel.cpp: In function ‘void kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)’:
-../../../../kernel.cpp:7:42: error: use of deleted function ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::<constructor>()’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                                          ^~
-../../../../kernel.cpp:7:11: note: ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::<constructor>()’ is implicitly deleted because the default definition would be ill-formed:
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-           ^
-../../../../kernel.cpp:7:23: error: union member ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::ui’ with non-trivial ‘ap_uint<_AP_W>::ap_uint() [with int _AP_W = 5]’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                       ^~
-../../../../kernel.cpp:7:37: error: union member ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::si’ with non-trivial ‘ap_int<_AP_W>::ap_int() [with int _AP_W = 5]’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                                     ^~
-../../../../kernel.cpp:7:42: error: use of deleted function ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::~<constructor>()’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                                          ^~
-../../../../kernel.cpp:7:11: note: ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::~<constructor>()’ is implicitly deleted because the default definition would be ill-formed:
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-           ^
-../../../../kernel.cpp:7:23: error: union member ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::ui’ with non-trivial ‘ap_uint<5>::~ap_uint()’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                       ^~
-../../../../kernel.cpp:7:37: error: union member ‘kernel(ap_fixed<5, 2>*, ap_fixed<5, 2>*)::<anonymous union>::si’ with non-trivial ‘ap_int<5>::~ap_int()’
-     union {ap_uint<5> ui; ap_int<5> si;} un;
-                                     ^~
-make: *** [obj/kernel.o] Error 1
-ERROR: [SIM 211-100] 'csim_design' failed: compilation error(s).
+   Generating csim.exe
+quantized: 
+-1.8750, 0.2500, 1.1250, 
+outputs: 
+-1.8750, 0.2500, 1.1250, 
+INFO: [SIM 211-1] CSim done with 0 errors.
 INFO: [SIM 211-3] *************** CSIM finish ***************
-4
-    while executing
-"source run.tcl"
-    ("uplevel" body line 1)
-    invoked from within
-"uplevel \#0 [list source $arg] "
-
-INFO: [Common 17-206] Exiting vivado_hls at Mon Jan  9 18:09:08 2023...
+INFO: [Common 17-206] Exiting vivado_hls at Tue Jan 10 01:56:39 2023...

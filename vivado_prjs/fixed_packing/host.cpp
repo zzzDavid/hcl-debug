@@ -15,6 +15,7 @@ int main()
     for (int i = 0; i < 3; i++) {
         printf("%.4f, ", (float) quantized[i]);
     }
+    printf("\n");
 
     ap_fixed<5, 2> outputs[3] = {0, 0, 0};
     kernel(quantized, outputs);

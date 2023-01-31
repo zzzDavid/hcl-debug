@@ -7,7 +7,7 @@
 source /opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/scripts/vivado_hls/hls.tcl -notrace
 INFO: Applying HLS Y2K22 patch v1.2 for IP revision
 INFO: [HLS 200-10] Running '/opt/xilinx/Xilinx_Vivado_vitis_2019.2/Vivado/2019.2/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'nz264' on host 'en-ec-brg-zhang-xcel.coecis.cornell.edu' (Linux_x86_64 version 3.10.0-1160.76.1.el7.x86_64) on Tue Jan 10 01:56:29 EST 2023
+INFO: [HLS 200-10] For user 'nz264' on host 'en-ec-brg-zhang-xcel.coecis.cornell.edu' (Linux_x86_64 version 3.10.0-1160.76.1.el7.x86_64) on Tue Jan 10 14:19:05 EST 2023
 INFO: [HLS 200-10] On os "CentOS Linux release 7.9.2009 (Core)"
 INFO: [HLS 200-10] In directory '/work/shared/users/phd/nz264/mlir/debug/vivado_prjs/fixed_packing'
 Sourcing Tcl script 'run.tcl'
@@ -29,4 +29,4 @@ outputs:
 -1.8750, 0.2500, 1.1250, 
 INFO: [SIM 211-1] CSim done with 0 errors.
 INFO: [SIM 211-3] *************** CSIM finish ***************
-INFO: [Common 17-206] Exiting vivado_hls at Tue Jan 10 01:56:39 2023...
+INFO: [Common 17-206] Exiting vivado_hls at Tue Jan 10 14:19:15 2023...

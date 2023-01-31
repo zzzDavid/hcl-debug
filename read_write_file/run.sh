@@ -2,8 +2,8 @@
 
 hcl-opt demo.mlir --lower-to-llvm | \
     mlir-translate -mlir-to-llvmir | \
-    opt -O3 -S | \
-    llc -O3 -filetype=obj -o demo.o
+    opt -O0 -S | \
+    llc -O0 -filetype=obj -o demo.o
 
 gcc demo.o \
     -L/work/shared/users/phd/nz264/mlir/hcl-dialect/build/lib/ \

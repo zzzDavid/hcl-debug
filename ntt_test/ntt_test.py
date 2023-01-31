@@ -112,6 +112,7 @@ def test_fwd_cooley_tukey():
   ω_hcl = hcl.placeholder((N // 2,), "omega", dtype)
   M_hcl = hcl.placeholder((1,), "M", dtype)
   s = hcl.create_schedule([A_hcl, ω_hcl, M_hcl], ntt.fwd_cooley_tukey)
+#   print(s.ast)
 #   print(hcl.lower(s))
 #   with open("revised-cooley-tucky.mlir", "w") as f:
 #     f.write(str(hcl.lower(s)))

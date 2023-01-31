@@ -1,0 +1,22 @@
+SKIPPED [1] mlir/test_codegen_vhls.py:14: print op to be supported
+SKIPPED [1] mlir/test_codegen_vhls.py:101: assertion error in type casting
+SKIPPED [1] mlir/test_dsl_def.py:232: AttributeError: Stage object has no attribute iter_var
+SKIPPED [1] mlir/test_dsl_def.py:272: verification failure
+SKIPPED [1] mlir/test_dsl_def.py:486: Index Error: list index out of range
+SKIPPED [1] mlir/test_hls_report.py:210: AttributeError: str object has no attribute keys
+SKIPPED [1] mlir/test_hls_report.py:253: AttributeError: str object has no attribute keys
+SKIPPED [1] mlir/test_runtime_build.py:6: TypeError: expected str, bytes or os.PathLike object, not NoneType
+SKIPPED [1] mlir/test_schedule_stream.py:31: IndexError: access out of bound
+SKIPPED [1] mlir/test_schedule_stream.py:92: TypeError: .to() got an unexpected keyword argument axis
+SKIPPED [1] mlir/test_schedule_stream.py:153: IndexError: list index out of range
+SKIPPED [1] mlir/test_schedule_stream.py:197: IndexError: list index out of range
+SKIPPED [1] mlir/test_schedule_stream.py:244: Schedule object has no attribute subgraph
+SKIPPED [1] mlir/test_schedule_stream.py:300: DevMemoryPair has no attribute types
+SKIPPED [1] mlir/test_schedule_stream.py:405: segfault
+SKIPPED [1] mlir/test_schedule_stream.py:492: for_() got an unexpected keyword argument 'name'
+SKIPPED [1] mlir/test_schedule_stream.py:528: segfault
+SKIPPED [1] mlir/test_schedule_stream.py:561: Schedule object has no attribute subgraph
+SKIPPED [1] mlir/test_schedule_stream.py:592: Expected str, bytes or os.PathLike Object, not NoneType
+SKIPPED [1] mlir/test_schedule_stream.py:634: function object has no attribute Super
+SKIPPED [1] mlir/test_schedule_stream.py:682: AttributeError: function object has no attribute B
+SKIPPED [1] mlir/test_schedule_stream.py:743: index out of range

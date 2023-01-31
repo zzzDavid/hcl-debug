@@ -1,0 +1,4 @@
+#!/bin/sh
+lli=${LLVMINTERP-lli}
+exec $lli \
+    /work/shared/users/phd/nz264/mlir/debug/type_inference/vivado_prjs/shift/kernel.prj/solution1/.autopilot/db/a.g.0.bc ${1+"$@"}

@@ -114,7 +114,7 @@ def fwd_cooley_tukey(A, ω, M):
                 r.v = (A_b[e.v] * ω[k.v]) %  M.v
                 t1.v = (l.v + r.v) % M.v
                 # the M+ is to make sure we don't get a negative l-r value ...
-                t2.v = (M + l.v - r.v) % M.v
+                t2.v = (M.v + l.v - r.v) % M.v
                 A_b[b] = t1.v
                 A_b[e.v] = t2.v
                 # hcl.print((size,i,b,t1,e,t2), "%lld.%lld.%lld=%lld %lld=%lld\n")

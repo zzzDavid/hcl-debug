@@ -105,5 +105,53 @@ def test_stride_2_conv():
     print("np_B: {}".format(np_B))
     assert np.array_equal(np_B, np_C)
 
+def test_bconv_stride2():
+    bs = 4
+    ic, oc = 16, 32
+    ih, iw = 8, 8
+    kh, kw = 3, 3
+    stride = 2
+    oh, ow = (ih - kh) // stride + 1, (iw - kw) // stride + 1
+    packing_factor = 16
+    filename = "/home/nz264/shared/mlir/demo/bconv/bconv_debug.mlir"
+    # filename = "/home/nz264/shared/mlir/demo/bconv/bconv_nchw_stride2_transformed.mlir"
+    np_A = np.random.randint(0, 2, size=(bs, ic, ih, iw))
+    np_B = np.random.randint(0, 2, size=(oc, ic, kh, kw))
+    np_C = np.zeros((bs, oc, oh, ow), dtype="int").astype(np.int32)
+    golden_C = np.zeros((bs, oc, oh, ow), dtype="int").astype(np.int32)
+    for n in range(0, bs):
+        for c in range(0, oc):
+            for y in range(0, oh):
+                for x in range(0, ow):
+                    for rc in range(0, ic):
+                        for rh in range(0, kh):
+                            for rw in range(0, kw):
+                                golden_C[n][c][y][x] += 1 - 2 * (
+                                    np_A[n][rc][y * stride + rh][x * stride + rw]
+                                    ^ np_B[c][rc][rh][rw]
+                                )
+
+    packed_A = np.ascontiguousarray(
+        np.packbits(
+            np_A.transpose((0, 2, 3, 1)).astype(np.bool_), axis=3, bitorder="little"
+        )
+        .view(np.uint16)
+        .transpose((0, 3, 1, 2))
+    )
+    packed_B = np.ascontiguousarray(
+        np.packbits(
+            np_B.transpose((0, 2, 3, 1)).astype(np.bool_), axis=3, bitorder="little"
+        )
+        .view(np.uint16)
+        .transpose((0, 3, 1, 2))    
+    )
+
+    run_ir(filename, [packed_A, packed_B, np_C])
+    # print("np_C: {}".format(np_C))
+    # print("golden_C: {}".format(golden_C))
+    assert np.array_equal(np_C, golden_C)
+
+
 if __name__ == "__main__":
-    test_stride_2_conv()
+    # test_stride_2_conv()
+    test_bconv_stride2()

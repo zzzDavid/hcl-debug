@@ -8,6 +8,48 @@ from hcl_mlir.passmanager import *
 from hcl_mlir.execution_engine import *
 from hcl_mlir.runtime import *
 
+class C128(ctypes.Structure):
+    """A ctype representation for MLIR's Double Complex."""
+
+    _fields_ = [("real", ctypes.c_double), ("imag", ctypes.c_double)]
+
+
+class C64(ctypes.Structure):
+    """A ctype representation for MLIR's Float Complex."""
+
+    _fields_ = [("real", ctypes.c_float), ("imag", ctypes.c_float)]
+
+
+class F16(ctypes.Structure):
+    """A ctype representation for MLIR's Float16."""
+
+    _fields_ = [("f16", ctypes.c_int16)]
+
+
+def to_numpy(array):
+    """Converts ctypes array back to numpy dtype array."""
+    if array.dtype == C128:
+        return array.view("complex128")
+    if array.dtype == C64:
+        return array.view("complex64")
+    if array.dtype == F16:
+        return array.view("float16")
+    return array
+
+
+def my_ranked_memref_to_numpy(ranked_memref):
+    """Converts ranked memrefs to numpy arrays."""
+    np_arr = np.ctypeslib.as_array(
+        ranked_memref.aligned, shape=ranked_memref.shape
+    )
+    strided_arr = np.lib.stride_tricks.as_strided(
+        np_arr,
+        np.ctypeslib.as_array(ranked_memref.shape),
+        np.ctypeslib.as_array(ranked_memref.strides) * np_arr.itemsize,
+    )
+    return to_numpy(strided_arr)
+
+
 
 def lowerToLLVM(module):
     # pm = PassManager.parse(
@@ -60,20 +102,20 @@ def run_ir(ir_filename, input_args, output_args):
         shared_libs = None
 
     input_memrefs = [ctypes.pointer(ctypes.pointer(get_ranked_memref_descriptor(arg))) for arg in input_args]
-    output_memrefs = [ctypes.pointer(ctypes.pointer(get_ranked_memref_descriptor(arg))) for arg in output_args]
-    # output_memrefs = [get_ranked_memref_descriptor(arg) for arg in output_args]
+    # output_memrefs = [ctypes.pointer(ctypes.pointer(get_ranked_memref_descriptor(arg))) for arg in output_args]
+    output_memrefs = [get_ranked_memref_descriptor(arg) for arg in output_args]
     # pack output memref into a struct with ctypes
     # first, make a struct with two fields: memref0, memref1
-    # class OutputStruct(ctypes.Structure):
-    #     _fields_ = [("memref0", output_memrefs[0].__class__), \
-    #                 ("memref1", output_memrefs[1].__class__)]
+    class OutputStruct(ctypes.Structure):
+        _fields_ = [("memref0", output_memrefs[0].__class__), \
+                    ("memref1", output_memrefs[1].__class__)]
     
-    # out_struct = OutputStruct()
+    out_struct = OutputStruct()
     # assign the memref pointers to the struct
-    # out_struct.memref0 = output_memrefs[0]
-    # out_struct.memref1 = output_memrefs[1]
+    out_struct.memref0 = output_memrefs[0]
+    out_struct.memref1 = output_memrefs[1]
     # do a pointer of pointer of the struct
-    # output_memrefs = ctypes.pointer(ctypes.pointer(out_struct))
+    output_memrefs = ctypes.pointer(ctypes.pointer(out_struct))
 
     with Context():
         module = Module.parse(code)
@@ -84,10 +126,13 @@ def run_ir(ir_filename, input_args, output_args):
         else:
             execution_engine = ExecutionEngine(lowered)
         execution_engine.invoke(
-            "kernel", output_memrefs[0], *input_memrefs)
-        # copy output memref back
-        res = ranked_memref_to_numpy(output_memrefs[0][0])
-        print(res)
+            "kernel", output_memrefs, *input_memrefs)
+        
+        res0 = my_ranked_memref_to_numpy(output_memrefs[0][0].memref0)
+        res1 = my_ranked_memref_to_numpy(output_memrefs[0][0].memref1)
+
+        print(res0)
+        print(res1)
 
 
 def test_multi_return():
@@ -95,10 +140,10 @@ def test_multi_return():
     np_A = np.random.randint(0, 10, size=(10,)).astype(np.int32)
     np_B = np.random.randint(0, 10, size=(10,)).astype(np.int32)
     out_A = np.zeros_like(np_A).astype(np.int32)
+    out_B = np.zeros_like(np_B).astype(np.int32)
     print(np_A)
     print(np_B)
-    # out_B = np.zeros_like(np_B).astype(np.int32)
-    run_ir(filename, input_args=[np_A, np_B], output_args=[out_A])
+    run_ir(filename, input_args=[np_A, np_B], output_args=[out_A, out_B])
     # print(out_A)
     # print(out_B)
 

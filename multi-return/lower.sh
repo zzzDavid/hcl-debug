@@ -1,0 +1,11 @@
+mlir-opt ir.mlir \
+	--convert-linalg-to-affine-loops \
+	--one-shot-bufferize \
+	--lower-affine \
+	--convert-scf-to-cf \
+	--convert-cf-to-llvm \
+	--convert-func-to-llvm \
+	--convert-arith-to-llvm \
+	--finalize-memref-to-llvm \
+	--reconcile-unrealized-casts \
+	-o ir.llvm.mlir
